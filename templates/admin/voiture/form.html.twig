@@ -1,0 +1,158 @@
+{# templates/admin/voiture/form.html.twig #}
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}
+  {{ isEdit ? 'Modifier Véhicule' : 'Nouveau Véhicule' }} - Admin
+{% endblock %}
+
+{% block page_title %}
+  {{ isEdit ? 'Modifier un Véhicule' : 'Ajouter un Véhicule' }}
+{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Admin</a></li>
+  <li class="breadcrumb-item"><a href="{{ path('admin_voitures') }}">Véhicules</a></li>
+  <li class="breadcrumb-item active">{{ isEdit ? 'Modifier' : 'Nouveau' }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="glass-panel p-4 p-lg-5 admin-form">
+
+  {# Alerts #}
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label }} mb-3">{{ message }}</div>
+    {% endfor %}
+  {% endfor %}
+
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div class="text-white-50">
+      Renseigne les informations du véhicule et ajoute une image (JPG/PNG/WEBP).
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ path('admin_voitures') }}" class="btn btn-outline-light rounded-pill px-3">
+        <i class="fas fa-arrow-left me-2"></i>Retour
+      </a>
+    </div>
+  </div>
+
+  {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+
+  <div class="row g-4">
+    {# ===== Col gauche : infos véhicule ===== #}
+    <div class="col-lg-7">
+      <div class="premium-card p-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="text-white fw-semibold">
+            <i class="fas fa-car-side me-2"></i>Informations véhicule
+          </div>
+          <span class="badge badge-soft">
+            <i class="fas fa-shield-alt me-1"></i>Admin
+          </span>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label form-label-dark">Matricule</label>
+            {{ form_widget(form.matricule, {'attr': {'class': 'form-control form-control-dark', 'placeholder': 'Ex: TU-1000-17'}}) }}
+            {{ form_errors(form.matricule) }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label form-label-dark">Marque</label>
+            {{ form_widget(form.marque, {'attr': {'class': 'form-control form-control-dark', 'placeholder': 'Ex: BMW'}}) }}
+            {{ form_errors(form.marque) }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label form-label-dark">Modèle</label>
+            {{ form_widget(form.modele, {'attr': {'class': 'form-control form-control-dark', 'placeholder': 'Ex: Serie 3'}}) }}
+            {{ form_errors(form.modele) }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label form-label-dark">Année</label>
+            {{ form_widget(form.annee, {'attr': {'class': 'form-control form-control-dark', 'placeholder': 'Ex: 2020'}}) }}
+            {{ form_errors(form.annee) }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label form-label-dark">Kilométrage</label>
+            {{ form_widget(form.kilometrage, {'attr': {'class': 'form-control form-control-dark', 'placeholder': 'Ex: 45000'}}) }}
+            {{ form_errors(form.kilometrage) }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label form-label-dark">Statut</label>
+            {{ form_widget(form.statut, {'attr': {'class': 'form-select form-control-dark'}}) }}
+            {{ form_errors(form.statut) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ===== Col droite : prix + photo + documents ===== #}
+    <div class="col-lg-5">
+      <div class="premium-card p-4 h-100">
+        <div class="text-white fw-semibold mb-3">
+          <i class="fas fa-tags me-2"></i>Tarifs & Médias
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label form-label-dark">Prix d’achat (DT)</label>
+            {{ form_widget(form.prixAchat, {'attr': {'class': 'form-control form-control-dark', 'placeholder': 'Ex: 45000'}}) }}
+            {{ form_errors(form.prixAchat) }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label form-label-dark">Prix location / jour (DT)</label>
+            {{ form_widget(form.prixLocationJour, {'attr': {'class': 'form-control form-control-dark', 'placeholder': 'Ex: 80'}}) }}
+            {{ form_errors(form.prixLocationJour) }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label form-label-dark">Photo (JPG/PNG/WEBP)</label>
+
+            {# IMPORTANT : le champ s'appelle "photo" dans VoitureType #}
+            {{ form_widget(form.photo, {'attr': {'class': 'form-control form-control-dark'}}) }}
+            {{ form_errors(form.photo) }}
+
+            {% if isEdit and voiture.photo %}
+              <div class="upload-preview mt-3">
+                <div class="text-white-50 small mb-2">
+                  <i class="fas fa-image me-1"></i>Image actuelle
+                </div>
+                <img
+                  src="{{ asset('uploads/voitures/' ~ voiture.photo) }}"
+                  alt="Image véhicule"
+                >
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label form-label-dark">Documents (optionnel)</label>
+            {{ form_widget(form.documents, {'attr': {'class': 'form-control form-control-dark', 'rows': 5, 'placeholder': 'Ex: {\"carte_grise\":\"ok\",\"assurance\":\"valide\"}'}}) }}
+            {{ form_errors(form.documents) }}
+          </div>
+        </div>
+
+        <div class="admin-actions mt-4 pt-3">
+          <div class="d-flex gap-2 justify-content-end flex-wrap">
+            <a href="{{ path('admin_voitures') }}" class="btn btn-outline-light rounded-pill px-4">
+              Annuler
+            </a>
+            <button type="submit" class="btn btn-premium rounded-pill px-4">
+              <i class="fas fa-save me-2"></i>{{ isEdit ? 'Enregistrer' : 'Créer' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {{ form_end(form) }}
+</div>
+{% endblock %}

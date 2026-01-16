@@ -1,0 +1,21 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block page_title %}Répondre{% endblock %}
+
+{% block content %}
+<div class="glass-panel p-4">
+  <div class="mb-3">
+    <div class="text-muted">Message du client ({{ original.sender.email }}) :</div>
+    <div class="p-3 bg-dark rounded mt-2">{{ original.content }}</div>
+  </div>
+
+  <form method="post">
+    <div class="mb-3">
+      <label class="text-white mb-2">Votre réponse</label>
+      <textarea name="content" class="form-control" rows="4" required></textarea>
+    </div>
+    <button class="btn btn-premium">Envoyer</button>
+    <a href="{{ path('admin_messages') }}" class="btn btn-outline-light">Retour</a>
+  </form>
+</div>
+{% endblock %}

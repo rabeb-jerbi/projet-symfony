@@ -1,0 +1,46 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block page_title %}Messages Clients{% endblock %}
+
+{% block content %}
+<div class="glass-panel p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="text-white mb-0">Boîte de réception</h5>
+    <span class="badge rounded-pill bg-primary">{{ threads|length }} conversations</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-dark table-hover align-middle mb-0">
+      <thead class="text-muted">
+        <tr>
+          <th>ID</th>
+          <th>De</th>
+          <th>Sujet</th>
+          <th>Dernier message</th>
+          <th>Date</th>
+          <th class="text-end"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for t in threads %}
+        <tr>
+          <td class="fw-bold">#{{ t.id }}</td>
+          <td>{{ t.sender.email }}</td>
+          <td class="fw-semibold text-white">{{ t.subject }}</td>
+          <td>{{ t.content|slice(0,60) }}{% if t.content|length > 60 %}...{% endif %}</td>
+          <td class="text-muted">{{ t.createdAt|date('d/m/Y H:i') }}</td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-premium" href="{{ path('admin_messages_show', {id: t.id}) }}">
+              Ouvrir
+            </a>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">Aucun message.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

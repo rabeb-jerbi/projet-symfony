@@ -1,0 +1,60 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="glass-panel p-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h5 class="text-white mb-1">Notifications</h5>
+      <small class="text-muted">{{ unreadCount }} non lues</small>
+    </div>
+
+    <form method="post" action="{{ path('admin_notifications_mark_all') }}">
+      <button class="btn btn-sm btn-outline-light">
+        <i class="fas fa-check-double me-1"></i> Tout marquer comme lu
+      </button>
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-dark table-hover align-middle">
+      <thead class="text-muted">
+        <tr>
+          <th>#</th>
+          <th>Titre</th>
+          <th>Contenu</th>
+          <th>Date</th>
+          <th>État</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for n in notifications %}
+        <tr>
+          <td class="fw-bold">#{{ n.id }}</td>
+          <td class="text-white fw-semibold">{{ n.title }}</td>
+          <td>{{ n.contenu|slice(0,80) }}{% if n.contenu|length > 80 %}…{% endif %}</td>
+          <td class="text-muted">{{ n.dateCreation|date('d/m/Y H:i') }}</td>
+          <td>
+            {% if n.isRead %}
+              <span class="badge bg-secondary">Lue</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Non lue</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">
+            Aucune notification
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

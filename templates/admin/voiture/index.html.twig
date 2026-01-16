@@ -1,0 +1,88 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Gestion des Véhicules - Admin{% endblock %}
+{% block page_title %}Gestion des Véhicules{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Admin</a></li>
+    <li class="breadcrumb-item active">Véhicules</li>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="text-white mb-0"><i class="fas fa-car me-2 text-primary"></i>Liste des Véhicules</h5>
+    <a href="{{ path('admin_voiture_new') }}" class="btn btn-premium">
+        <i class="fas fa-plus me-2"></i>Nouveau Véhicule
+    </a>
+</div>
+
+<div class="glass-panel p-4">
+    {% if voitures|length > 0 %}
+        <div class="table-responsive">
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Matricule</th>
+                        <th>Marque / Modèle</th>
+                        <th>Année</th>
+                        <th>Kilométrage</th>
+                        <th>Prix Achat</th>
+                        <th>Prix Location/Jour</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voiture in voitures %}
+                        <tr>
+                            <td>
+                                {% if voiture.photo %}
+                                    <img src="{{ asset('uploads/voitures/' ~ voiture.photo) }}" alt=""
+                                         class="rounded" style="width: 60px; height: 40px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 40px;">
+                                        <i class="fas fa-car text-muted"></i>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>{{ voiture.matricule }}</td>
+                            <td>
+                                <div class="fw-bold text-white">{{ voiture.marque }}</div>
+                                <small class="text-muted">{{ voiture.modele }}</small>
+                            </td>
+                            <td>{{ voiture.annee }}</td>
+                            <td>{{ voiture.kilometrage|number_format }} km</td>
+                            <td class="text-success fw-bold">{{ voiture.prixAchat|number_format }} DT</td>
+                            <td class="text-info fw-bold">{{ voiture.prixLocationJour|number_format }} DT</td>
+                            <td>
+                                {% set statutClass = {'disponible':'success','loué':'warning','vendu':'danger'} %}
+                                <span class="badge bg-{{ statutClass[voiture.statut] ?? 'secondary' }}">
+                                    {{ voiture.statut }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ path('admin_voiture_edit', {id: voiture.id}) }}"
+                                       class="btn btn-sm btn-outline-primary btn-action">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="post" action="{{ path('admin_voiture_delete', {id: voiture.id}) }}"
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce véhicule ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ voiture.id) }}">
+                                        <button class="btn btn-sm btn-outline-danger btn-action">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted text-center py-5">Aucun véhicule enregistré. Commencez par en ajouter un !</p>
+    {% endif %}
+</div>
+{% endblock %}

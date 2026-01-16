@@ -1,0 +1,45 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block page_title %}Conversation{% endblock %}
+
+{% block content %}
+<div class="glass-panel p-4">
+
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h5 class="text-white mb-1">{{ root.subject }}</h5>
+      <div class="text-muted small">
+        Thread #{{ root.id }}
+      </div>
+    </div>
+    <a href="{{ path('admin_messages') }}" class="btn btn-sm btn-outline-light">
+      <i class="fas fa-arrow-left me-1"></i> Retour
+    </a>
+  </div>
+
+  <div class="border rounded-4 p-3 mb-4" style="border-color: rgba(255,255,255,.10)!important;">
+    {% for m in messages %}
+      <div class="mb-3 pb-3" style="border-bottom: 1px solid rgba(255,255,255,.08);">
+        <div class="d-flex justify-content-between">
+          <div class="fw-semibold text-white">
+            {{ m.sender.nom }} <span class="text-muted small">({{ m.sender.email }})</span>
+          </div>
+          <div class="text-muted small">{{ m.createdAt|date('d/m/Y H:i') }}</div>
+        </div>
+        <div class="text-white mt-2">{{ m.content }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <h6 class="text-white mb-2">Répondre</h6>
+  {{ form_start(replyForm) }}
+    <div class="mb-3">
+      {{ form_widget(replyForm.content, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+    </div>
+    <button class="btn btn-premium">
+      <i class="fas fa-paper-plane me-1"></i> Envoyer
+    </button>
+  {{ form_end(replyForm) }}
+
+</div>
+{% endblock %}

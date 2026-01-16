@@ -1,0 +1,270 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin - YOURCar{% endblock %}
+
+{% block body %}
+<div class="admin-layout">
+  {# ===== SIDEBAR (si ton base l’affiche déjà, supprime ce bloc) ===== #}
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span>YOUR</span>Car
+      </div>
+      <div class="text-white-50 small mt-1">Admin Panel</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="{{ path('admin_dashboard') }}">
+        <i class="fas fa-chart-line"></i> Dashboard
+      </a>
+      <a class="nav-item" href="{{ path('admin_voitures_index') }}">
+        <i class="fas fa-car"></i> Véhicules
+      </a>
+      <a class="nav-item" href="{{ path('admin_users_index') }}">
+        <i class="fas fa-users"></i> Utilisateurs
+      </a>
+      <a class="nav-item" href="{{ path('admin_commandes_index') }}">
+        <i class="fas fa-shopping-cart"></i> Commandes
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <a class="nav-item" href="{{ path('app_home') }}">
+        <i class="fas fa-globe"></i> Voir le site
+      </a>
+      <a class="nav-item text-danger" href="{{ path('app_logout') }}">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </a>
+    </nav>
+  </aside>
+
+  {# ===== MAIN ===== #}
+  <main class="admin-content">
+    <header class="admin-header">
+      <div class="d-flex align-items-center justify-content-between gap-3">
+        <div>
+          <div class="text-white fw-bold fs-4">Tableau de bord</div>
+          <div class="text-white-50 small">Vue d’ensemble (véhicules, clients, commandes, revenus)</div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <a class="btn btn-outline-light rounded-pill px-3" href="{{ path('admin_voitures_create') }}">
+            <i class="fas fa-plus me-2"></i>Ajouter voiture
+          </a>
+          <div class="admin-user-chip">
+            <div class="admin-user-avatar">
+              {{ app.user.nom|default('A')|slice(0,1)|upper }}
+            </div>
+            <div class="d-none d-md-block">
+              <div class="text-white fw-semibold lh-1">{{ app.user.nom|default('Admin') }}</div>
+              <div class="text-white-50 small">Administrateur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="admin-page-content">
+
+      {# ===== KPI ROW ===== #}
+      <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="admin-kpi-card">
+            <div class="admin-kpi-top admin-accent-blue"></div>
+            <div class="admin-kpi-body">
+              <div class="admin-kpi-icon"><i class="fas fa-car"></i></div>
+              <div class="admin-kpi-meta">Véhicules</div>
+              <div class="admin-kpi-value">{{ totalVehicules|default(0) }}</div>
+              <div class="admin-kpi-sub">
+                <span class="admin-dot admin-dot-success"></span>
+                {{ disponibleCount|default(0) }} disponibles
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="admin-kpi-card">
+            <div class="admin-kpi-top admin-accent-cyan"></div>
+            <div class="admin-kpi-body">
+              <div class="admin-kpi-icon"><i class="fas fa-users"></i></div>
+              <div class="admin-kpi-meta">Clients</div>
+              <div class="admin-kpi-value">{{ totalClients|default(0) }}</div>
+              <div class="admin-kpi-sub">
+                <span class="admin-dot admin-dot-info"></span>
+                + {{ nouveauxClients|default(0) }} récents
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="admin-kpi-card">
+            <div class="admin-kpi-top admin-accent-amber"></div>
+            <div class="admin-kpi-body">
+              <div class="admin-kpi-icon"><i class="fas fa-shopping-cart"></i></div>
+              <div class="admin-kpi-meta">Commandes</div>
+              <div class="admin-kpi-value">{{ totalCommandes|default(0) }}</div>
+              <div class="admin-kpi-sub">
+                <span class="admin-dot admin-dot-warning"></span>
+                {{ commandesToday|default(0) }} aujourd’hui
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="admin-kpi-card">
+            <div class="admin-kpi-top admin-accent-green"></div>
+            <div class="admin-kpi-body">
+              <div class="admin-kpi-icon"><i class="fas fa-coins"></i></div>
+              <div class="admin-kpi-meta">Revenus</div>
+              <div class="admin-kpi-value">{{ totalRevenus|default('0') }} DT</div>
+              <div class="admin-kpi-sub">
+                <span class="admin-dot admin-dot-success"></span>
+                Total cumulé
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ===== PROGRESS ===== #}
+      <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+          <div class="admin-surface p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="text-white fw-semibold"><i class="fas fa-check-circle text-success me-2"></i>Disponibles</div>
+              <span class="admin-pill">{{ disponibleCount|default(0) }}</span>
+            </div>
+            <div class="admin-progress">
+              <div class="admin-progress-bar admin-bar-success" style="width: {{ dispoPct|default(70) }}%"></div>
+            </div>
+            <div class="text-white-50 small mt-2">Taux disponibilité</div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="admin-surface p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="text-white fw-semibold"><i class="fas fa-key text-warning me-2"></i>Louées</div>
+              <span class="admin-pill">{{ loueeCount|default(0) }}</span>
+            </div>
+            <div class="admin-progress">
+              <div class="admin-progress-bar admin-bar-warning" style="width: {{ loueePct|default(20) }}%"></div>
+            </div>
+            <div class="text-white-50 small mt-2">Locations en cours</div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="admin-surface p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="text-white fw-semibold"><i class="fas fa-tag text-danger me-2"></i>Vendues</div>
+              <span class="admin-pill">{{ vendueCount|default(0) }}</span>
+            </div>
+            <div class="admin-progress">
+              <div class="admin-progress-bar admin-bar-danger" style="width: {{ venduePct|default(10) }}%"></div>
+            </div>
+            <div class="text-white-50 small mt-2">Ventes finalisées</div>
+          </div>
+        </div>
+      </div>
+
+      {# ===== TABLE + NEW CLIENTS ===== #}
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="admin-surface p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="text-white fw-bold fs-5">
+                <i class="fas fa-receipt me-2 text-primary"></i>Dernières commandes
+              </div>
+              <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{{ path('admin_commandes_index') }}">
+                Voir tout
+              </a>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="table admin-table-modern mb-0">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Type</th>
+                    <th>Montant</th>
+                    <th>Date</th>
+                    <th class="text-end">Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for c in lastCommandes|default([]) %}
+                    <tr>
+                      <td class="text-white">#{{ c.id }}</td>
+                      <td class="text-white">{{ c.client.nom|default('—') }}</td>
+                      <td>
+                        {% set t = c.type|default('—') %}
+                        <span class="admin-badge admin-badge-soft">
+                          <i class="fas fa-tag me-1"></i>{{ t|capitalize }}
+                        </span>
+                      </td>
+                      <td class="text-white fw-semibold">{{ c.montant|default(0) }} DT</td>
+                      <td class="text-white-50">{{ c.date|date('d/m/Y') }}</td>
+                      <td class="text-end">
+                        {% set st = c.statut|default('en attente')|lower %}
+                        {% if st matches '/valid/' %}
+                          <span class="admin-status admin-status-success">Validée</span>
+                        {% elseif st matches '/attente/' %}
+                          <span class="admin-status admin-status-warning">En attente</span>
+                        {% else %}
+                          <span class="admin-status admin-status-muted">{{ c.statut|default('—') }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="6" class="text-center text-white-50 py-4">
+                        Aucune commande pour le moment.
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="admin-surface p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="text-white fw-bold fs-5">
+                <i class="fas fa-user-plus me-2 text-info"></i>Nouveaux clients
+              </div>
+              <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{{ path('admin_users_index') }}">
+                Voir tout
+              </a>
+            </div>
+
+            <div class="admin-list">
+              {% for u in newClients|default([]) %}
+                <div class="admin-list-item">
+                  <div class="admin-list-avatar">
+                    {{ u.nom|default('C')|slice(0,1)|upper }}
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="text-white fw-semibold">{{ u.nom|default('Client') }}</div>
+                    <div class="text-white-50 small">{{ u.email|default('—') }}</div>
+                  </div>
+                </div>
+              {% else %}
+                <div class="text-white-50 small">Aucun nouveau client.</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+{% endblock %}

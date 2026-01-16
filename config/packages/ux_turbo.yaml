@@ -1,0 +1,4 @@
+# Enable CSRF protection
+framework:
+    csrf_protection:
+        enabled: true

@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ voiture.marque }} {{ voiture.modele }} - YOURCar{% endblock %}
+
+{% block body %}
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_catalogue') }}" class="text-primary hover-primary">Catalogue</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ voiture.marque }} {{ voiture.modele }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="glass-panel overflow-hidden position-relative">
+                    {% if voiture.photo %}
+                        <img src="{{ asset('uploads/' ~ voiture.photo) }}" class="img-fluid w-100" alt="{{ voiture.marque }} {{ voiture.modele }}" style="height: 500px; object-fit: cover; border-radius: 16px;">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center bg-dark bg-opacity-50" style="height: 500px; border-radius: 16px;">
+                            <i class="fas fa-car fa-5x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    {% if voiture.statut == 'disponible' %}
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <span class="badge bg-success rounded-pill shadow px-3 py-2">
+                                <i class="fas fa-check-circle me-1"></i> Disponible
+                            </span>
+                        </div>
+                    {% else %}
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <span class="badge bg-secondary rounded-pill shadow px-3 py-2">
+                                <i class="fas fa-times-circle me-1"></i> {{ voiture.statut|capitalize }}
+                            </span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-lg-5">
+                <div class="mb-4">
+                    <h1 class="display-5 fw-bold text-white mb-3">
+                        {{ voiture.marque }} <span class="text-gradient">{{ voiture.modele }}</span>
+                    </h1>
+                    <div class="d-flex gap-4 text-muted mb-4">
+                        <span><i class="far fa-calendar-alt me-2 text-primary"></i>{{ voiture.annee }}</span>
+                        <span><i class="fas fa-road me-2 text-primary"></i>{{ voiture.kilometrage|number_format(0, '.', ' ') }} km</span>
+                        <span><i class="fas fa-id-card me-2 text-primary"></i>{{ voiture.matricule }}</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 mb-4">
+                    <h4 class="text-white fw-bold mb-4"><i class="fas fa-tag me-2 text-primary"></i>Tarification</h4>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="text-center p-3 rounded-3" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3);">
+                                <small class="text-muted d-block mb-2">Prix d'achat</small>
+                                <div class="h3 fw-bold text-gradient mb-0">{{ voiture.prixAchat|number_format(0, '.', ' ') }} DT</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-3 rounded-3" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3);">
+                                <small class="text-muted d-block mb-2">Location / jour</small>
+                                <div class="h3 fw-bold text-white mb-0">{{ voiture.prixLocationJour|number_format(0, '.', ' ') }} DT</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if voiture.statut == 'disponible' %}
+                        {% if is_granted('ROLE_CLIENT') %}
+                            <div class="d-grid gap-3">
+                                <a href="{{ path('app_commande_client_new', {'id': voiture.id, 'type': 'achat'}) }}" class="btn-premium py-3 text-center">
+                                    <i class="fas fa-shopping-cart me-2"></i>Acheter maintenant
+                                </a>
+                                <a href="{{ path('app_commande_client_new', {'id': voiture.id, 'type': 'location'}) }}" class="btn btn-outline-light py-3">
+                                    <i class="fas fa-calendar-check me-2"></i>Louer cette voiture
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning border-0 mb-0" style="background: rgba(251, 191, 36, 0.1); border-radius: 12px;">
+                                <i class="fas fa-info-circle me-2"></i> 
+                                <span class="text-white">Veuillez vous <a href="{{ path('app_login') }}" class="text-primary fw-bold">connecter</a> pour commander.</span>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-secondary border-0 mb-0" style="background: rgba(148, 163, 184, 0.1); border-radius: 12px;">
+                            <i class="fas fa-exclamation-triangle me-2"></i> 
+                            <span class="text-white">Ce véhicule n'est pas disponible actuellement.</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="glass-panel p-4">
+                    <h5 class="text-white fw-bold mb-4"><i class="fas fa-info-circle me-2 text-primary"></i>Spécifications Techniques</h5>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <small class="text-muted d-block mb-1">Marque</small>
+                                <strong class="text-white">{{ voiture.marque }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <small class="text-muted d-block mb-1">Modèle</small>
+                                <strong class="text-white">{{ voiture.modele }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <small class="text-muted d-block mb-1">Année</small>
+                                <strong class="text-white">{{ voiture.annee }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <small class="text-muted d-block mb-1">Kilométrage</small>
+                                <strong class="text-white">{{ voiture.kilometrage|number_format(0, '.', ' ') }} km</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ path('app_catalogue') }}" class="btn btn-outline-light px-5 py-3 rounded-pill">
+                <i class="fas fa-arrow-left me-2"></i>Retour au catalogue
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

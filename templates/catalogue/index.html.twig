@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue - YOURCar{% endblock %}
+
+{% block body %}
+<section class="py-5">
+  <div class="container">
+
+    {# ====== TITRE ====== #}
+    <div class="text-center mb-5">
+      <h1 class="display-4"><span class="text-gradient">Notre Catalogue</span></h1>
+      <p class="text-muted">
+        Découvrez notre collection exclusive de véhicules disponibles à la vente et à la location.
+      </p>
+    </div>
+
+    {# ====== FILTRES ====== #}
+    <div class="glass-panel p-4 mb-5">
+      <form action="{{ path('app_catalogue') }}" method="get" class="row g-3 align-items-stretch">
+
+        <div class="col-md-4">
+          <input
+            type="text"
+            name="q"
+            class="form-control bg-transparent text-white"
+            placeholder="Rechercher par marque, modèle..."
+            value="{{ searchQuery }}"
+          >
+        </div>
+
+        <div class="col-md-3">
+          <select name="type" class="form-control bg-transparent text-white">
+            <option value="" class="text-dark" {% if typeFilter == '' %}selected{% endif %}>Tous les types</option>
+            <option value="sedan" class="text-dark" {% if typeFilter == 'sedan' %}selected{% endif %}>Berline</option>
+            <option value="suv" class="text-dark" {% if typeFilter == 'suv' %}selected{% endif %}>SUV</option>
+            <option value="luxe" class="text-dark" {% if typeFilter == 'luxe' %}selected{% endif %}>Luxe</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <select name="sort" class="form-control bg-transparent text-white">
+            <option value="newest" class="text-dark" {% if sortBy == 'newest' %}selected{% endif %}>Plus récents</option>
+            <option value="price_asc" class="text-dark" {% if sortBy == 'price_asc' %}selected{% endif %}>Prix croissant</option>
+            <option value="price_desc" class="text-dark" {% if sortBy == 'price_desc' %}selected{% endif %}>Prix décroissant</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <button type="submit" class="btn-premium w-100 h-100 d-flex align-items-center justify-content-center">
+            <i class="fas fa-search me-2"></i>Filtrer
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    {# ====== COMPTEUR ====== #}
+    {% if voitures|length > 0 %}
+      <div class="mb-4">
+        <p class="text-muted mb-0">
+          <i class="fas fa-car me-2"></i>
+          {{ voitures|length }} véhicule{{ voitures|length > 1 ? 's' : '' }}
+          trouvé{{ voitures|length > 1 ? 's' : '' }}
+        </p>
+      </div>
+    {% endif %}
+
+    {# ====== GRID ====== #}
+    <div class="car-grid">
+      {% for voiture in voitures %}
+
+        <div class="car-card">
+          <div class="car-img-wrapper">
+
+            {# ===========================================================
+               IMAGE (ROBUSTE)
+               - Si DB contient une URL (http/https) => on l'utilise telle quelle
+               - Sinon => on suppose un fichier dans /public/uploads/voitures/
+               =========================================================== #}
+            {% set rawPhoto = (voiture.photo ?? '')|trim %}
+            {% set isUrl = rawPhoto starts with 'http://' or rawPhoto starts with 'https://' %}
+
+            {% if rawPhoto %}
+              {% if isUrl %}
+                <img src="{{ rawPhoto }}" alt="{{ voiture.marque }} {{ voiture.modele }}" loading="lazy">
+              {% else %}
+                <img src="{{ asset('uploads/voitures/' ~ rawPhoto) }}" alt="{{ voiture.marque }} {{ voiture.modele }}" loading="lazy">
+              {% endif %}
+            {% else %}
+              {# IMPORTANT: ton ancien fallback "assets/img/default-car.png" n'existe pas (404),
+                 donc on met une image qui existe chez toi #}
+              <img src="{{ asset('uploads/voitures/voiture1.jpg') }}" alt="Voiture" loading="lazy">
+            {% endif %}
+
+            {# ====== BADGE STATUT ====== #}
+            <div class="position-absolute top-0 end-0 p-3">
+              {% if voiture.statut == 'disponible' %}
+                <span class="badge bg-success rounded-pill shadow">Disponible</span>
+              {% else %}
+                <span class="badge bg-secondary rounded-pill shadow">Indisponible</span>
+              {% endif %}
+            </div>
+
+          </div>
+
+          <div class="car-info">
+            <h3 class="car-title text-white">
+              {{ voiture.marque }} <span class="fw-light">{{ voiture.modele }}</span>
+            </h3>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div>
+                <div class="car-price text-gradient mb-0">
+                  {{ voiture.prixAchat|number_format(0, '.', ' ') }} DT
+                </div>
+                <small class="text-muted">
+                  ou {{ voiture.prixLocationJour|number_format(0, '.', ' ') }} DT / jour
+                </small>
+              </div>
+
+              <a href="{{ path('app_catalogue_show', {'id': voiture.id}) }}"
+                 class="btn btn-sm btn-outline-light rounded-pill px-3">
+                Voir
+              </a>
+            </div>
+
+            <div class="d-flex justify-content-between mt-3 text-muted small border-top border-secondary pt-3"
+                 style="border-color: rgba(255,255,255,0.1) !important;">
+              <span><i class="fas fa-calendar-alt me-1"></i> {{ voiture.annee }}</span>
+              <span><i class="fas fa-road me-1"></i> {{ voiture.kilometrage|number_format(0, '.', ' ') }} km</span>
+            </div>
+          </div>
+        </div>
+
+      {% else %}
+        <div class="col-12 text-center py-5 glass-panel">
+          <i class="fas fa-search fa-3x text-muted mb-3"></i>
+          <p class="text-muted text-center w-100 mb-3">
+            Aucun véhicule ne correspond à votre recherche.
+          </p>
+
+          {% if searchQuery or typeFilter %}
+            <a href="{{ path('app_catalogue') }}" class="btn btn-outline-light mt-3">
+              <i class="fas fa-redo me-2"></i>Réinitialiser les filtres
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}

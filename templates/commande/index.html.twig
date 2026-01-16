@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Commandes - Karhabti{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">📦 Gestion des Commandes</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Type</th>
+                            <th>Prix</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for commande in commandes %}
+                        <tr>
+                            <td>#{{ commande.id }}</td>
+                            <td>{{ commande.date|date('d/m/Y H:i') }}</td>
+                            <td>{{ commande.client.nom }}</td>
+                            <td>
+                                <span class="badge {{ commande.type == 'achat' ? 'bg-success' : 'bg-info' }}">
+                                    {{ commande.type|capitalize }}
+                                </span>
+                            </td>
+                            <td>{{ commande.prixCmd }} DT</td>
+                            <td>
+                                <span class="badge bg-secondary">{{ commande.statut }}</span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ path('app_commande_show', {'id': commande.id}) }}" class="btn btn-outline-info">Voir</a>
+                                    <a href="{{ path('app_commande_edit', {'id': commande.id}) }}" class="btn btn-outline-warning">Éditer</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucune commande trouvée.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

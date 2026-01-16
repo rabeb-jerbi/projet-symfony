@@ -1,0 +1,66 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Gestion des Utilisateurs - Admin{% endblock %}
+
+{% block page_title %}Gestion des Utilisateurs{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Admin</a></li>
+    <li class="breadcrumb-item active">Utilisateurs</li>
+{% endblock %}
+
+{% block content %}
+<div class="glass-panel p-4">
+    <h5 class="text-white mb-4"><i class="fas fa-users me-2 text-info"></i>Liste des Utilisateurs</h5>
+
+    {% if utilisateurs|length > 0 %}
+        <div class="table-responsive">
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Type</th>
+                        <th>Rôles</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for utilisateur in utilisateurs %}
+                        <tr>
+                            <td>#{{ utilisateur.id }}</td>
+                            <td class="fw-bold text-white">{{ utilisateur.nom }}</td>
+                            <td>{{ utilisateur.email }}</td>
+                            <td>
+                                {% if 'ROLE_ADMIN' in utilisateur.roles %}
+                                    <span class="badge bg-danger"><i class="fas fa-shield-alt"></i> Admin</span>
+                                {% elseif 'ROLE_CLIENT' in utilisateur.roles %}
+                                    <span class="badge bg-info"><i class="fas fa-user"></i> Client</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Utilisateur</span>
+                                {% endif %}
+                            </td>
+                            <td><small class="text-muted">{{ utilisateur.roles|join(', ') }}</small></td>
+                            <td>
+                                {% if utilisateur.id != app.user.id %}
+                                    <form method="post" action="{{ path('admin_utilisateur_delete', {id: utilisateur.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');" class="d-inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                                        <button class="btn btn-sm btn-outline-danger btn-action">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted small">(Vous)</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted text-center py-5">Aucun utilisateur enregistré.</p>
+    {% endif %}
+</div>
+{% endblock %}

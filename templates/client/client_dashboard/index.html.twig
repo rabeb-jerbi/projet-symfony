@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div style="margin-top: 100px;"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4 border-0" style="border-radius: 15px;">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <img src="https://ui-avatars.com/api/?name={{ app.user.nom|url_encode }}&background=ea1f33&color=fff&size=128" class="rounded-circle shadow" alt="Avatar">
+                    </div>
+                    <h3 class="fw-bold">{{ app.user.nom }}</h3>
+                    <p class="text-muted">{{ app.user.email }}</p>
+                    <hr class="my-4">
+                    <div class="text-start">
+                        <p><i class="fas fa-map-marker-alt text-danger me-2"></i> <strong>Adresse:</strong> {{ app.user.adresse }}</p>
+                        <p><i class="fas fa-phone text-danger me-2"></i> <strong>Téléphone:</strong> {{ app.user.numTeleph }}</p>
+                    </div>
+                    <a href="#" class="btn-auth btn-signin w-100 mt-3">Modifier mon profil</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">Mes Commandes</h2>
+                <a href="{{ path('app_catalogue') }}" class="btn-auth btn-signup">Nouvelle Commande</a>
+            </div>
+            
+            <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                <div class="card-body p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead style="background-color: #ea1f33; color: white;">
+                                <tr>
+                                    <th class="ps-4 py-3">Date</th>
+                                    <th class="py-3">Type</th>
+                                    <th class="py-3">Voiture</th>
+                                    <th class="py-3">Prix</th>
+                                    <th class="pe-4 py-3">Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for commande in commandes %}
+                                    <tr>
+                                        <td class="ps-4">{{ commande.date|date('d/m/Y H:i') }}</td>
+                                        <td>
+                                            <span class="badge {{ commande.type == 'achat' ? 'bg-success' : 'bg-info' }}" style="border-radius: 20px; padding: 5px 12px;">
+                                                {{ commande.type|capitalize }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% for ligne in commande.lignesCommande %}
+                                                <strong>{{ ligne.voiture.marque }}</strong> {{ ligne.voiture.modele }}
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ commande.prixCmd }} DT</td>
+                                        <td class="pe-4">
+                                            <span class="badge bg-secondary" style="border-radius: 20px; padding: 5px 12px;">{{ commande.statut }}</span>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5 text-muted">Vous n'avez pas encore de commandes.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

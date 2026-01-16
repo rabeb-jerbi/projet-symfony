@@ -1,0 +1,192 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Dashboard Admin - YOURCar{% endblock %}
+
+{% block page_title %}Tableau de Bord{% endblock %}
+
+{% block content %}
+<!-- Cartes Statistiques -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card glass-panel">
+            <div class="stat-icon bg-primary bg-opacity-25">
+                <i class="fas fa-car text-primary"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="mb-0">{{ totalVoitures }}</h3>
+                <p class="text-muted mb-0">Véhicules</p>
+            </div>
+            <div class="stat-details">
+                <small class="text-success"><i class="fas fa-check-circle"></i> {{ voituresDisponibles }} disponibles</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card glass-panel">
+            <div class="stat-icon bg-info bg-opacity-25">
+                <i class="fas fa-users text-info"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="mb-0">{{ totalClients }}</h3>
+                <p class="text-muted mb-0">Clients</p>
+            </div>
+            <div class="stat-details">
+                <small class="text-muted"><i class="fas fa-user-plus"></i> {{ derniersClients|length }} récents</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card glass-panel">
+            <div class="stat-icon bg-warning bg-opacity-25">
+                <i class="fas fa-shopping-cart text-warning"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="mb-0">{{ totalCommandes }}</h3>
+                <p class="text-muted mb-0">Commandes</p>
+            </div>
+            <div class="stat-details">
+                <small class="text-primary"><i class="fas fa-clock"></i> {{ dernieresCommandes|length }} aujourd'hui</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card glass-panel">
+            <div class="stat-icon bg-success bg-opacity-25">
+                <i class="fas fa-dollar-sign text-success"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="mb-0">{{ (revenuTotal / 1000)|number_format(0) }}K DT</h3>
+                <p class="text-muted mb-0">Revenus</p>
+            </div>
+            <div class="stat-details">
+                <small class="text-success"><i class="fas fa-arrow-up"></i> Total cumulé</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Vue d'ensemble des véhicules -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="glass-panel p-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6 class="text-white mb-0"><i class="fas fa-check-circle text-success me-2"></i>Disponibles</h6>
+                <span class="badge bg-success">{{ voituresDisponibles }}</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ (voituresDisponibles / totalVoitures * 100)|round }}%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="glass-panel p-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6 class="text-white mb-0"><i class="fas fa-key text-warning me-2"></i>Louées</h6>
+                <span class="badge bg-warning">{{ voituresLouees }}</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (voituresLouees / totalVoitures * 100)|round }}%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="glass-panel p-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6 class="text-white mb-0"><i class="fas fa-shopping-bag text-danger me-2"></i>Vendues</h6>
+                <span class="badge bg-danger">{{ voituresVendues }}</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (voituresVendues / totalVoitures * 100)|round }}%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Dernières Commandes -->
+    <div class="col-lg-8">
+        <div class="glass-panel p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="text-white mb-0"><i class="fas fa-shopping-cart me-2 text-primary"></i>Dernières Commandes</h5>
+                <a href="{{ path('admin_commandes') }}" class="btn btn-sm btn-outline-light">Voir tout</a>
+            </div>
+            
+            {% if dernieresCommandes|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Type</th>
+                                <th>Montant</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for commande in dernieresCommandes %}
+                                <tr>
+                                    <td>#{{ commande.id }}</td>
+                                    <td>{{ commande.client.nom }}</td>
+                                    <td>
+                                        {% if commande.type == 'achat' %}
+                                            <span class="badge bg-primary"><i class="fas fa-shopping-bag"></i> Achat</span>
+                                        {% else %}
+                                            <span class="badge bg-info"><i class="fas fa-key"></i> Location</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold text-success">{{ commande.prixCmd|number_format(0) }} DT</td>
+                                    <td>{{ commande.date|date('d/m/Y') }}</td>
+                                    <td>
+                                        {% set statutClass = {
+                                            'en attente': 'warning',
+                                            'validée': 'success',
+                                            'livrée': 'info',
+                                            'annulée': 'danger'
+                                        } %}
+                                        <span class="badge bg-{{ statutClass[commande.statut] ?? 'secondary' }}">{{ commande.statut|capitalize }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted text-center py-4">Aucune commande pour le moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Derniers Clients -->
+    <div class="col-lg-4">
+        <div class="glass-panel p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="text-white mb-0"><i class="fas fa-users me-2 text-info"></i>Nouveaux Clients</h5>
+                <a href="{{ path('admin_utilisateurs') }}" class="btn btn-sm btn-outline-light">Voir tout</a>
+            </div>
+            
+            {% if derniersClients|length > 0 %}
+                <div class="vstack gap-3">
+                    {% for client in derniersClients %}
+                        <div class="d-flex align-items-center gap-3 p-2 rounded" style="background: rgba(255,255,255,0.02);">
+                            <div class="avatar-circle bg-info bg-opacity-25 text-info d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="text-white fw-bold small">{{ client.nom }}</div>
+                                <small class="text-muted">{{ client.email }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted text-center py-4">Aucun nouveau client.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

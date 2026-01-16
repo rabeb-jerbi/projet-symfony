@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Louer une voiture{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h2 class="text-white mb-4">Location : {{ voiture.marque }} {{ voiture.modele }}</h2>
+
+    <div class="glass-panel p-4">
+        {{ form_start(form) }}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="text-white mb-1">Date début</label>
+                    {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-md-6">
+                    <label class="text-white mb-1">Date fin</label>
+                    {{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button class="btn btn-primary">
+                    <i class="fas fa-check me-1"></i> Confirmer la location
+                </button>
+                <a class="btn btn-outline-light" href="{{ path('app_catalogue') }}">Annuler</a>
+            </div>
+        {{ form_end(form) }}
+
+        <div class="text-muted mt-3 small">
+            Prix/jour : <b>{{ voiture.prixLocationJour }}</b>
+        </div>
+    </div>
+</div>
+{% endblock %}

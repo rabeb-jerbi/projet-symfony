@@ -1,0 +1,150 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Paiements{% endblock %}
+{% block page_title %}Paiements{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Admin</a></li>
+    <li class="breadcrumb-item active">Paiements</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <h2 class="h5 text-white mb-1">Suivi des paiements</h2>
+            <p class="text-muted mb-0">Consultez les paiements associés aux commandes.</p>
+        </div>
+
+        <span class="badge rounded-pill bg-primary">
+            {{ paiements|length }} paiements
+        </span>
+    </div>
+
+    {# Filtres (UI pro) #}
+    <div class="card glass-panel border-0 mb-3">
+        <div class="card-body">
+            <form method="get" class="row g-2 align-items-end">
+
+                <div class="col-12 col-md-4">
+                    <label class="form-label text-muted mb-1">Statut</label>
+                    <select name="status" class="form-select bg-dark text-white border-0">
+                        <option value="">Tous</option>
+                        <option value="PAYE" {{ app.request.get('status') == 'PAYE' ? 'selected' : '' }}>PAYÉ</option>
+                        <option value="EN_COURS" {{ app.request.get('status') == 'EN_COURS' ? 'selected' : '' }}>EN COURS</option>
+                        <option value="NON_PAYE" {{ app.request.get('status') == 'NON_PAYE' ? 'selected' : '' }}>NON PAYÉ</option>
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label text-muted mb-1">Date min</label>
+                    <input type="date" name="from" value="{{ app.request.get('from') }}"
+                           class="form-control bg-dark text-white border-0">
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label text-muted mb-1">Date max</label>
+                    <input type="date" name="to" value="{{ app.request.get('to') }}"
+                           class="form-control bg-dark text-white border-0">
+                </div>
+
+                <div class="col-12 col-md-2 d-grid">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i>Filtrer
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    {# Table pro #}
+    <div class="card glass-panel border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead class="text-muted">
+                        <tr>
+                            <th class="ps-3">#</th>
+                            <th>Commande</th>
+                            <th>Montant</th>
+                            <th>Date paiement</th>
+                            <th>Statut</th>
+                            <th class="text-end pe-3">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for p in paiements %}
+                        <tr>
+                            <td class="ps-3 fw-bold">{{ p.id }}</td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar-circle d-inline-flex align-items-center justify-content-center"
+                                          style="width:32px;height:32px;background:rgba(140,85,255,.25);color:#fff;">
+                                        <i class="fas fa-receipt"></i>
+                                    </span>
+                                    <div>
+                                        <div class="text-white fw-semibold">
+                                            Commande #{{ p.commande.id }}
+                                        </div>
+                                        <div class="text-muted small">
+                                            {{ p.commande.client ? (p.commande.client.nom ?? p.commande.client.email ?? '') : '' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="fw-semibold">
+                                {{ p.montant|number_format(2, '.', ' ') }} DT
+                            </td>
+
+                            <td class="text-muted">
+                                {{ p.datePaiement ? p.datePaiement|date('d/m/Y H:i') : '—' }}
+                            </td>
+
+                            <td>
+                                {% set st = (p.statut ?? '')|upper %}
+                                <span class="badge rounded-pill
+                                    {% if st in ['PAYE','PAID'] %} bg-success
+                                    {% elseif st in ['EN_COURS','PENDING'] %} bg-warning text-dark
+                                    {% else %} bg-danger
+                                    {% endif %}">
+                                    {{ st ? st|replace({'_':' '}) : '—' }}
+                                </span>
+                            </td>
+
+                            <td class="text-end pe-3">
+                                <a class="btn btn-sm btn-outline-light"
+                                   href="{{ path('app_paiement_show', {'id': p.id}) }}"
+                                   title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                <a class="btn btn-sm btn-outline-primary"
+                                   href="{{ path('app_paiement_edit', {'id': p.id}) }}"
+                                   title="Modifier">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+
+                                {{ include('paiement/_delete_form.html.twig', {paiement: p}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="fas fa-money-bill-wave me-2"></i>Aucun paiement trouvé.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

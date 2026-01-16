@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+
+  {# Titre de page (sans boutons, car la navbar suffit) #}
+  <div class="mb-4">
+    <h1 class="text-white fw-bold mb-1">Mon Profil</h1>
+    <div class="text-white-50 small">
+      Consulte et mets à jour tes informations personnelles.
+    </div>
+  </div>
+
+  {# Carte principale #}
+  <div class="glass-panel p-4 p-md-5" style="border-radius: 22px;">
+    <div class="row g-4 align-items-stretch">
+
+      {# Bloc identité #}
+      <div class="col-lg-4">
+        <div class="premium-card h-100 p-4">
+
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="premium-avatar">
+              <span>{{ app.user.nom|default('U')|slice(0,1)|upper }}</span>
+            </div>
+
+            <div class="flex-grow-1 min-w-0">
+              <div class="text-white fw-bold fs-5 text-truncate">{{ app.user.nom }}</div>
+              <div class="text-white-50 small text-truncate">{{ app.user.email }}</div>
+
+              <div class="d-flex flex-wrap gap-2 mt-2">
+                <span class="badge badge-soft">
+                  <i class="fas fa-user-check me-1"></i>Client
+                </span>
+                <span class="badge badge-soft">
+                  <i class="fas fa-shield-alt me-1"></i>Compte sécurisé
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="premium-divider mb-3"></div>
+
+          <div class="d-grid gap-2 mt-3">
+            <a class="btn btn-light rounded-pill py-2 fw-semibold" href="{{ path('client_profile_edit') }}">
+              <i class="fas fa-pen me-2"></i>Modifier mon profil
+            </a>
+
+            {# Optionnel : si tu veux garder un accès direct aux commandes #}
+            <a class="btn btn-outline-light rounded-pill py-2" href="{{ path('client_orders') }}">
+              <i class="fas fa-receipt me-2"></i>Mes commandes
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      {# Bloc infos #}
+      <div class="col-lg-8">
+        <div class="premium-card h-100 p-4 p-md-5">
+
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+              <h3 class="text-white fw-bold mb-1">Informations personnelles</h3>
+              <div class="text-white-50 small">Ces informations sont utilisées pour tes commandes.</div>
+            </div>
+          </div>
+
+          <div class="premium-info">
+
+            <div class="info-row">
+              <div class="label"><i class="fas fa-envelope"></i> Email</div>
+              <div class="value">{{ app.user.email }}</div>
+            </div>
+
+            <div class="info-row">
+              <div class="label"><i class="fas fa-user"></i> Nom</div>
+              <div class="value">{{ app.user.nom }}</div>
+            </div>
+
+            <div class="info-row">
+              <div class="label"><i class="fas fa-map-marker-alt"></i> Adresse</div>
+              <div class="value">{{ app.user.adresse }}</div>
+            </div>
+
+            <div class="info-row">
+              <div class="label"><i class="fas fa-phone"></i> Téléphone</div>
+              <div class="value">{{ app.user.numTeleph }}</div>
+            </div>
+
+          </div>
+
+          <div class="premium-divider my-4"></div>
+
+          <div class="text-white-50 small">
+            <i class="fas fa-lock me-2"></i>
+            Pour l’instant, tu peux modifier tes informations (nom, email, adresse, téléphone).
+            Une page “Changer mot de passe” sera ajoutée plus tard.
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

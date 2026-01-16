@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Commandes{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white m-0">Mes Commandes</h2>
+    </div>
+
+    <div class="glass-panel p-3">
+        {% if orders is empty %}
+            <div class="text-muted text-center py-4">Aucune commande</div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Prix</th>
+                            <th>Statut</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for c in orders %}
+                        {% set badgeClass =
+                            c.statut == 'VALIDEE' ? 'bg-success' :
+                            (c.statut == 'EN_ATTENTE' ? 'bg-warning text-dark' :
+                            (c.statut == 'ANNULEE' ? 'bg-danger' : 'bg-secondary'))
+                        %}
+
+                        <tr>
+                            <td class="fw-semibold">{{ c.id }}</td>
+                            <td>{{ c.type ?? '-' }}</td>
+                            <td>{{ c.date ? c.date|date('d/m/Y H:i') : '-' }}</td>
+                            <td>{{ c.prixCmd is not null ? (c.prixCmd|number_format(2, '.', ' ')) ~ ' DT' : '-' }}</td>
+                            <td>
+                                <span class="badge {{ badgeClass }}">{{ c.statut }}</span>
+                            </td>
+                            <td class="text-end">
+                                {% if c.statut != 'VALIDEE' %}
+                                    <form method="post"
+                                          action="{{ path('client_payer_commande', { id: c.id }) }}"
+                                          class="d-inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('payer_commande_' ~ c.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-credit-card me-1"></i> Payer
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check me-1"></i> Payée
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

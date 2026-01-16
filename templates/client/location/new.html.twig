@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Louer {{ voiture.marque }} {{ voiture.modele }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+  <h2 class="text-white mb-4">Louer : {{ voiture.marque }} {{ voiture.modele }}</h2>
+
+  <div class="glass-panel p-4">
+    {{ form_start(form) }}
+      <div class="row">
+        <div class="col-md-6">
+          {{ form_row(form.dateDebut) }}
+        </div>
+        <div class="col-md-6">
+          {{ form_row(form.dateFin) }}
+        </div>
+      </div>
+
+      <button class="btn btn-primary mt-3">
+        Confirmer la location
+      </button>
+    {{ form_end(form) }}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    providers:
+        chain_provider:
+            chain:
+                providers: [client_provider, admin_provider]
+
+        client_provider:
+            entity:
+                class: App\Entity\Client
+                property: email
+
+        admin_provider:
+            entity:
+                class: App\Entity\Administrateur
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            lazy: true
+            provider: chain_provider
+
+            form_login:
+                login_path: app_login
+                check_path: app_login
+
+                default_target_path: app_redirect_after_login
+                always_use_default_target_path: true
+
+                username_parameter: email
+                password_parameter: password
+
+                enable_csrf: true
+                csrf_parameter: _csrf_token
+                csrf_token_id: authenticate
+
+            logout:
+                path: app_logout
+                target: app_login
+
+    access_control:
+        # Public
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/redirect, roles: PUBLIC_ACCESS }
+
+        # Protected
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/client, roles: ROLE_CLIENT }
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+        ROLE_CLIENT: [ROLE_USER]

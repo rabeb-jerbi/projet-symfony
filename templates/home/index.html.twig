@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section id="home">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content">
+                    <h1>Trouvez la voiture de <br><span class="text-gradient">Vos Rêves</span></h1>
+                    <p>Découvrez une expérience d'achat et de location automobile sans précédent. Qualité, transparence et service premium garantis.</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ path('app_catalogue') }}" class="btn-premium">Explorer le Catalogue</a>
+                        <a href="#contact" class="btn btn-outline-light rounded-pill px-4 py-2 mt-2">Nous Contacter</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 hero-image d-none d-lg-block">
+                    <img src="{{ asset('assets/images/img1.png') }}" class="img-fluid" alt="Luxury Car">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cars" class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-5">
+                <div>
+                    <h2 class="display-5 mb-0">Véhicules <span class="text-gradient">En Vedette</span></h2>
+                    <p class="text-muted">Nos meilleures offres du moment</p>
+                </div>
+                <a href="{{ path('app_catalogue') }}" class="text-white">Voir tout <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+
+            <div class="car-grid">
+                {% for voiture in voitures %}
+                    <div class="car-card">
+                        <div class="car-img-wrapper">
+                            {% if voiture.photo %}
+                                <img src="{{ asset('uploads/voitures/' ~ voiture.photo) }}" alt="{{ voiture.marque }}">
+                            {% else %}
+                                <div class="d-flex align-items-center justify-content-center bg-secondary" style="height: 200px;">
+                                    <i class="fas fa-car fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <div class="position-absolute top-0 end-0 p-3">
+                                <span class="badge bg-primary rounded-pill">{{ voiture.annee }}</span>
+                            </div>
+                        </div>
+
+                        <div class="car-info">
+                            <h3 class="car-title text-white">{{ voiture.marque }} <span class="fw-light">{{ voiture.modele }}</span></h3>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="car-price text-gradient">{{ voiture.prixAchat|number_format(0, '.', ' ') }} DT</div>
+                                <a href="{{ path('app_catalogue_show', {'id': voiture.id}) }}" class="btn btn-sm btn-outline-light rounded-pill px-3">Détails</a>
+                            </div>
+
+                            <div class="d-flex gap-3 mt-3 text-muted small border-top border-secondary pt-3" style="border-color: rgba(255,255,255,0.1) !important;">
+                                <span><i class="fas fa-road me-1"></i> {{ voiture.kilometrage|number_format(0, '.', ' ') }} km</span>
+                                <span><i class="fas fa-gas-pump me-1"></i> Essence</span>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-12 text-center py-5 glass-panel">
+                        <i class="fas fa-car fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aucun véhicule disponible pour le moment.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="py-5 position-relative" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <h2 class="text-center mb-5">Nos <span class="text-gradient">Services</span></h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="service-card h-100">
+                        <div class="service-icon"><i class="fas fa-key"></i></div>
+                        <h3 class="h4 text-white">Vente & Achat</h3>
+                        <p class="text-muted">Une large sélection de véhicules neufs et d'occasion certifiés. Reprise de votre ancien véhicule possible.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-card h-100">
+                        <div class="service-icon"><i class="fas fa-tools"></i></div>
+                        <h3 class="h4 text-white">Maintenance</h3>
+                        <p class="text-muted">Service après-vente premium, diagnostics complets et réparations par des experts certifiés.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="service-card h-100">
+                        <div class="service-icon"><i class="fas fa-file-contract"></i></div>
+                        <h3 class="h4 text-white">Location</h3>
+                        <p class="text-muted">Besoin d'un véhicule pour un jour ou un mois ? Découvrez nos offres de location flexibles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-md-6">
+                    <h2 class="mb-4">Restons en <span class="text-gradient">Contact</span></h2>
+                    <p class="text-muted mb-4">Une question ? Un projet d'achat ? Notre équipe est à votre disposition 7j/7.</p>
+                    
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-primary rounded-circle p-3 me-3 bg-opacity-25 text-white">
+                            <i class="fas fa-map-marker-alt fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white mb-0">Notre Showroom</h5>
+                            <p class="text-muted mb-0">Les Berges du Lac, Tunis</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="bg-secondary rounded-circle p-3 me-3 bg-opacity-25 text-white">
+                            <i class="fas fa-envelope fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white mb-0">Email</h5>
+                            <p class="text-muted mb-0">contact@yourcar.tn</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="glass-panel p-4">
+                        <form>
+                            <div class="mb-3">
+                                <label class="text-white small mb-2">Nom complet</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-white small mb-2">Email</label>
+                                <input type="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-white small mb-2">Message</label>
+                                <textarea class="form-control" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-premium w-100">Envoyer le message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

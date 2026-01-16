@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes messages{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+  <h3>Mes messages</h3>
+
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label }}">{{ message }}</div>
+    {% endfor %}
+  {% endfor %}
+
+  <form method="post" class="mb-4">
+    <div class="mb-2">
+      <textarea name="content" class="form-control" rows="3" placeholder="Écrire un message à l’admin..." required></textarea>
+    </div>
+    <button class="btn btn-primary">Envoyer</button>
+  </form>
+
+  <div class="list-group">
+    {% for m in messages %}
+      <div class="list-group-item">
+        <div class="small text-muted">
+          {{ m.createdAt|date('d/m/Y H:i') }} —
+          <b>{{ m.sender.email }}</b> → <b>{{ m.recipient.email }}</b>
+        </div>
+        <div>{{ m.content }}</div>
+      </div>
+    {% else %}
+      <div class="text-muted">Aucun message.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

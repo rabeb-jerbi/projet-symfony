@@ -1,0 +1,182 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Avis{% endblock %}
+{% block page_title %}Avis{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Admin</a></li>
+    <li class="breadcrumb-item active">Avis</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <h2 class="h5 text-white mb-1">Avis clients</h2>
+            <p class="text-muted mb-0">Consultez les avis laissés par les clients sur chaque voiture.</p>
+        </div>
+
+        <span class="badge rounded-pill bg-primary">
+            {{ avis|length }} avis
+        </span>
+    </div>
+
+    {# Filtres #}
+    <div class="card glass-panel border-0 mb-3">
+        <div class="card-body">
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-12 col-md-5">
+                    <label class="form-label text-muted mb-1">Voiture</label>
+                    <select name="car" class="form-select bg-dark text-white border-0">
+                        <option value="">Toutes les voitures</option>
+                        {% for v in voitures|default([]) %}
+                            <option value="{{ v.id }}" {{ app.request.get('car') == v.id ? 'selected' : '' }}>
+                                {{ v.marque }} {{ v.modele }} ({{ v.matricule ?? v.id }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-2">
+                    <label class="form-label text-muted mb-1">Note</label>
+                    <select name="rating" class="form-select bg-dark text-white border-0">
+                        <option value="">Toutes</option>
+                        {% for r in 5..1 %}
+                            <option value="{{ r }}" {{ app.request.get('rating') == r ? 'selected' : '' }}>
+                                {{ r }} ★ et +
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label text-muted mb-1">Recherche</label>
+                    <input name="q"
+                           value="{{ app.request.get('q') }}"
+                           class="form-control bg-dark text-white border-0"
+                           placeholder="Client / commentaire...">
+                </div>
+
+                <div class="col-12 col-md-2 d-grid">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i>Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {# Table #}
+    <div class="card glass-panel border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead class="text-muted">
+                        <tr>
+                            <th class="ps-3">Voiture</th>
+                            <th>Client</th>
+                            <th>Note</th>
+                            <th>Commentaire</th>
+                            <th>Date</th>
+                            <th class="text-end pe-3">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for avi in avis %}
+                        <tr>
+                            {# Voiture #}
+                            <td class="ps-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar-circle d-inline-flex align-items-center justify-content-center"
+                                          style="width:32px;height:32px;background:rgba(140,85,255,.25);color:#fff;">
+                                        <i class="fas fa-car"></i>
+                                    </span>
+                                    <div>
+                                        <div class="text-white fw-semibold">
+                                            {{ avi.voiture ? (avi.voiture.marque ~ ' ' ~ avi.voiture.modele) : '—' }}
+                                        </div>
+                                        <div class="text-muted small">
+                                            {{ avi.voiture ? (avi.voiture.matricule ?? '') : '' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            {# Client #}
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar-circle d-inline-flex align-items-center justify-content-center"
+                                          style="width:32px;height:32px;background:rgba(40,167,69,.18);color:#fff;">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <div>
+                                        <div class="text-white fw-semibold">
+                                            {{ avi.client ? (avi.client.nom ?? 'Client') : '—' }}
+                                        </div>
+                                        <div class="text-muted small">
+                                            {{ avi.client ? (avi.client.email ?? '') : '' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            {# Note #}
+                            <td>
+                                {% set n = avi.note ?? 0 %}
+                                <span class="badge rounded-pill
+                                    {% if n >= 4 %} bg-success
+                                    {% elseif n == 3 %} bg-warning text-dark
+                                    {% else %} bg-danger
+                                    {% endif %}">
+                                    {{ n }}/5
+                                </span>
+
+                                <div class="mt-1 small">
+                                    {% for i in 1..5 %}
+                                        <span style="color: {{ i <= n ? '#f5c542' : 'rgba(255,255,255,.25)' }};">★</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+
+                            {# Commentaire #}
+                            <td style="max-width:420px;">
+                                <div class="text-truncate" title="{{ avi.commentaire }}">
+                                    {{ avi.commentaire ?: '—' }}
+                                </div>
+                            </td>
+
+                            {# Date #}
+                            <td class="text-muted">
+                                {{ avi.date ? avi.date|date('d/m/Y H:i') : '—' }}
+                            </td>
+
+                            {# Actions : فقط عرض #}
+                            <td class="text-end pe-3">
+                                <a class="btn btn-sm btn-outline-light"
+                                   href="{{ path('app_avis_show', {'id': avi.id}) }}"
+                                   title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                {# إذا تحب تخلي الحذف للتعديل/modération فقط #}
+                                {# {{ include('avis/_delete_form.html.twig', {avi: avi}) }} #}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="fas fa-star-half-alt me-2"></i>Aucun avis trouvé.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement - Commande #{{ commande.id }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-white mb-1">Paiement</h2>
+            <div class="text-muted">Commande <span class="text-white fw-semibold">#{{ commande.id }}</span></div>
+        </div>
+
+        <a href="{{ path('client_orders') }}" class="btn btn-outline-light rounded-pill px-4">
+            <i class="fas fa-arrow-left me-2"></i> Retour
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- ✅ Formulaire -->
+        <div class="col-lg-8">
+            <div class="glass-panel p-4 shadow-lg">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-lock me-2 text-success"></i> Paiement sécurisé
+                    </h5>
+                    <span class="badge bg-dark border border-secondary text-white px-3 py-2">
+                        Statut : {{ commande.statut }}
+                    </span>
+                </div>
+
+                <hr class="border-secondary">
+
+                {{ form_start(form) }}
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-white fw-semibold">
+                            <i class="fas fa-wallet me-2 text-info"></i> Méthode de paiement
+                        </label>
+                        {{ form_widget(form.methode, {'attr': {'class': 'form-select bg-transparent text-white border-secondary', 'id': 'methodePaiement'}}) }}
+                        <div class="form-text text-muted">Choisis la méthode (carte, cash, virement...).</div>
+                        {{ form_errors(form.methode) }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label text-white fw-semibold">
+                            <i class="fas fa-money-bill-wave me-2 text-success"></i> Montant
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent text-white border-secondary">DT</span>
+                            <input type="text"
+                                   class="form-control bg-transparent text-white border-secondary"
+                                   value="{{ commande.prixCmd }}"
+                                   disabled>
+                        </div>
+                        <div class="form-text text-muted">Montant calculé automatiquement.</div>
+                    </div>
+                </div>
+
+                <!-- ✅ Champs carte (affichage conditionnel) -->
+                <div id="carteFields" class="mt-4" style="display:none;">
+                    <div class="p-3 rounded-4 border border-secondary" style="background: rgba(255,255,255,0.03);">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <i class="fas fa-credit-card text-primary"></i>
+                            <h6 class="text-white mb-0">Informations carte</h6>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-white">Nom du porteur</label>
+                                {{ form_widget(form.nomPorteur, {'attr': {'class': 'form-control bg-transparent text-white border-secondary', 'placeholder': 'Ex: Rabeb Ben ...'}}) }}
+                                {{ form_errors(form.nomPorteur) }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-white">4 derniers chiffres</label>
+                                {{ form_widget(form.last4, {'attr': {'class': 'form-control bg-transparent text-white border-secondary', 'placeholder': '1234', 'maxlength': '4'}}) }}
+                                <div class="form-text text-muted">On ne stocke pas le numéro complet.</div>
+                                {{ form_errors(form.last4) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn btn-success rounded-pill px-4">
+                        <i class="fas fa-check me-2"></i> Confirmer le paiement
+                    </button>
+                    <a href="{{ path('client_orders') }}" class="btn btn-outline-light rounded-pill px-4">
+                        Annuler
+                    </a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <!-- ✅ Résumé -->
+        <div class="col-lg-4">
+            <div class="glass-panel p-4 shadow-lg">
+                <h6 class="text-white mb-3">
+                    <i class="fas fa-receipt me-2 text-warning"></i> Résumé
+                </h6>
+
+                <div class="d-flex justify-content-between text-white mb-2">
+                    <span class="text-muted">Commande</span>
+                    <span class="fw-semibold">#{{ commande.id }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between text-white mb-2">
+                    <span class="text-muted">Type</span>
+                    <span class="fw-semibold">{{ commande.type }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between text-white mb-2">
+                    <span class="text-muted">Date</span>
+                    <span class="fw-semibold">{{ commande.date ? commande.date|date('d/m/Y H:i') : '-' }}</span>
+                </div>
+
+                <hr class="border-secondary my-3">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-white fw-semibold">Total à payer</span>
+                    <span class="fs-4 fw-bold text-white">{{ commande.prixCmd }} DT</span>
+                </div>
+
+                <div class="mt-3 text-muted small">
+                    <i class="fas fa-shield-alt me-2"></i> Paiement simulé (mode projet).
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleCarteFields() {
+        const select = document.getElementById('methodePaiement');
+        const carte = document.getElementById('carteFields');
+        if (!select || !carte) return;
+
+        // si ta value est "CARTE" (comme dans le controller)
+        carte.style.display = (select.value === 'CARTE') ? 'block' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        toggleCarteFields();
+        const select = document.getElementById('methodePaiement');
+        if (select) select.addEventListener('change', toggleCarteFields);
+    });
+</script>
+{% endblock %}

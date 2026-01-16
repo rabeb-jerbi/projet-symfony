@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Voitures - Karhabti{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>🚗 Gestion des Voitures</h1>
+        <a href="{{ path('app_voiture_new') }}" class="btn btn-primary">➕ Ajouter une voiture</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Photo</th>
+                            <th>Marque & Modèle</th>
+                            <th>Matricule</th>
+                            <th>Année</th>
+                            <th>Prix Achat</th>
+                            <th>Prix Loc.</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for voiture in voitures %}
+                        <tr>
+                            <td>
+                                <img src="{{ voiture.photo }}" alt="{{ voiture.marque }}" style="width: 60px; height: 40px; object-fit: cover;" class="rounded">
+                            </td>
+                            <td>
+                                <strong>{{ voiture.marque }}</strong><br>
+                                <small class="text-muted">{{ voiture.modele }}</small>
+                            </td>
+                            <td>{{ voiture.matricule }}</td>
+                            <td>{{ voiture.annee }}</td>
+                            <td>{{ voiture.prixAchat }} DT</td>
+                            <td>{{ voiture.prixLocationJour }} DT</td>
+                            <td>
+                                <span class="badge {{ voiture.statut == 'disponible' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ voiture.statut }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ path('app_voiture_show', {'id': voiture.id}) }}" class="btn btn-outline-info">Voir</a>
+                                    <a href="{{ path('app_voiture_edit', {'id': voiture.id}) }}" class="btn btn-outline-warning">Éditer</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center">Aucune voiture trouvée.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

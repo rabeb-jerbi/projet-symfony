@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+{% block title %}Paiement{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="text-white mb-1">Paiement</h1>
+            <div class="text-muted">Commande #{{ commande.id }}</div>
+        </div>
+        <a href="{{ path('client_orders') }}" class="btn btn-outline-light rounded-pill">
+            <i class="fas fa-arrow-left me-2"></i>Retour
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-panel p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="text-white fw-semibold">
+                        <i class="fas fa-lock text-success me-2"></i>Paiement sécurisé
+                    </div>
+                    <span class="badge bg-secondary">Statut : en attente</span>
+                </div>
+
+                {{ form_start(form) }}
+
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label class="form-label text-white-50 mb-1">Méthode de paiement</label>
+                        {{ form_widget(form.methode, {
+    attr: {
+        class: 'form-select bg-dark text-white border-secondary',
+        id: 'paiement_methode'
+    }
+}) }}
+
+                        <div class="form-text text-white-50">Choisis la méthode (carte, cash, virement...).</div>
+                    </div>
+{# --- Nom du porteur --- #}
+<div class="col-md-8 mt-3" id="carte_nom" style="display:none;">
+    <label class="form-label text-white-50 mb-1">Nom du porteur (carte)</label>
+    {{ form_widget(form.nomPorteur, {
+        attr: {
+            class: 'form-control bg-transparent text-white border-secondary'
+        }
+    }) }}
+</div>
+
+{# --- 4 derniers chiffres --- #}
+<div class="col-md-4 mt-3" id="carte_last4" style="display:none;">
+    <label class="form-label text-white-50 mb-1">4 derniers chiffres</label>
+    {{ form_widget(form.last4, {
+        attr: {
+            class: 'form-control bg-transparent text-white border-secondary',
+            maxlength: 4,
+            placeholder: '1234'
+        }
+    }) }}
+</div>
+
+                    <div class="col-md-6">
+                        <label class="form-label text-white-50 mb-1">Montant</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent text-white border-secondary">DT</span>
+                            <input class="form-control bg-transparent text-white border-secondary" value="{{ commande.prixCmd }}" disabled>
+                        </div>
+                        <div class="form-text text-white-50">Montant calculé automatiquement.</div>
+                    </div>
+
+                    <div class="col-md-8" id="carte_fields" style="display:none;">
+                        <label class="form-label text-white-50 mb-1">Nom du porteur (carte)</label>
+                        {{ form_widget(form.nomPorteur, {'attr': {'class':'form-control bg-transparent text-white border-secondary'}}) }}
+                    </div>
+
+                    <div class="col-md-4" id="last4_field" style="display:none;">
+                        <label class="form-label text-white-50 mb-1">4 derniers chiffres</label>
+                        {{ form_widget(form.last4, {'attr': {'class':'form-control bg-transparent text-white border-secondary'}}) }}
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-success rounded-pill px-4">
+                        <i class="fas fa-check me-2"></i>Confirmer le paiement
+                    </button>
+                    <a href="{{ path('client_orders') }}" class="btn btn-outline-light rounded-pill px-4">Annuler</a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-panel p-4">
+                <div class="text-white fw-semibold mb-3">
+                    <i class="fas fa-receipt text-warning me-2"></i>Résumé
+                </div>
+
+                <div class="d-flex justify-content-between text-white-50">
+                    <span>Commande</span><span class="text-white fw-semibold">#{{ commande.id }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-white-50 mt-2">
+                    <span>Type</span><span class="text-white fw-semibold">{{ commande.type }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-white-50 mt-2">
+                    <span>Date</span><span class="text-white fw-semibold">{{ commande.date ? commande.date|date('d/m/Y H:i') : '-' }}</span>
+                </div>
+
+                <hr class="border-secondary my-3">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-white-50">Total à payer</span>
+                    <span class="text-white fw-bold fs-4">{{ commande.prixCmd }} DT</span>
+                </div>
+
+                <div class="text-white-50 small mt-3">
+                    <i class="fas fa-shield-alt me-2"></i>Paiement simulé (mode projet).
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const methode = document.getElementById('paiement_methode');
+    const nom = document.getElementById('carte_nom');
+    const last4 = document.getElementById('carte_last4');
+
+    function toggleCarteFields() {
+        if (methode.value === 'CARTE') {
+            nom.style.display = 'block';
+            last4.style.display = 'block';
+        } else {
+            nom.style.display = 'none';
+            last4.style.display = 'none';
+        }
+    }
+
+    methode.addEventListener('change', toggleCarteFields);
+    toggleCarteFields(); // au chargement
+});
+</script>
+{% endblock %}

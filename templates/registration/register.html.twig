@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - YOURCar{% endblock %}
+
+{% block body %}
+<div style="margin-top: 120px;"></div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h1 class="fw-bold"><span class="text-danger">YOUR</span>Car</h1>
+                        <p class="text-muted">Créez votre compte client</p>
+                    </div>
+
+                    {{ form_start(registrationForm) }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(registrationForm.nom, 'Nom complet', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control py-2', 'style': 'border-radius: 10px;'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(registrationForm.numTeleph, 'Téléphone', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(registrationForm.numTeleph, {'attr': {'class': 'form-control py-2', 'style': 'border-radius: 10px;'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(registrationForm.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control py-2', 'style': 'border-radius: 10px;'}}) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(registrationForm.adresse, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.adresse, {'attr': {'class': 'form-control py-2', 'style': 'border-radius: 10px;'}}) }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control py-2', 'style': 'border-radius: 10px;'}}) }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn-auth btn-signup py-3 fs-5">
+                                S'inscrire
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <p class="mb-0">Déjà un compte ? <a href="{{ path('app_login') }}" class="text-danger fw-bold">Connectez-vous</a></p>
+                        </div>
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

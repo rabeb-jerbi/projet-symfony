@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LigneCommande{% endblock %}
+
+{% block body %}
+    <h1>LigneCommande</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ ligne_commande.id }}</td>
+            </tr>
+            <tr>
+                <th>NumLigne</th>
+                <td>{{ ligne_commande.numLigne }}</td>
+            </tr>
+            <tr>
+                <th>DateDebut</th>
+                <td>{{ ligne_commande.dateDebut ? ligne_commande.dateDebut|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateFin</th>
+                <td>{{ ligne_commande.dateFin ? ligne_commande.dateFin|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>MontantParJour</th>
+                <td>{{ ligne_commande.montantParJour }}</td>
+            </tr>
+            <tr>
+                <th>TotaleTTC</th>
+                <td>{{ ligne_commande.totaleTTC }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_ligne_commande_index') }}">back to list</a>
+
+    <a href="{{ path('app_ligne_commande_edit', {'id': ligne_commande.id}) }}">edit</a>
+
+    {{ include('ligne_commande/_delete_form.html.twig') }}
+{% endblock %}
