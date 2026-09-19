@@ -22,3 +22,6 @@
 .env.test
 .env.dev
 .env.local
+
+.env.test
+.env.dev
