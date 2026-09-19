@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard admin{% endblock %}
+
+{% block body %}
+<h1>Dashboard admin</h1>
+
+<ul>
+  <li>Total voitures : {{ totalVoitures }}</li>
+  <li>Voitures disponibles : {{ voituresDisponibles }}</li>
+  <li>Total commandes : {{ totalCommandes }}</li>
+  <li>Total clients : {{ totalClients }}</li>
+</ul>
+{% endblock %}

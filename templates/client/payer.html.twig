@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block title %}Paiement{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+  <h1 class="mb-3">Paiement (simulation)</h1>
+
+  <div class="card">
+    <div class="card-body">
+      <p><b>Commande #</b>{{ commande.id }}</p>
+      <p><b>Type:</b> {{ commande.type }}</p>
+      <p><b>Montant:</b> {{ commande.prixCmd }} DT</p>
+      <p><b>Statut:</b> {{ commande.statut }}</p>
+
+      <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('pay' ~ commande.id) }}">
+        <button class="btn btn-primary">Payer maintenant</button>
+        <a href="{{ path('client_dashboard') }}" class="btn btn-outline-secondary">Annuler</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

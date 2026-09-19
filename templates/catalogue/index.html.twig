@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}Catalogue{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+  <h1 class="mb-4">Catalogue</h1>
+
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label }}">{{
+        message
+      }}</div>
+    {% endfor %}
+  {% endfor %}
+
+  <div class="row g-3">
+    {% for v in voitures %}
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ v.marque }} {{ v.modele }}</h5>
+            <p class="card-text mb-1"><b>Achat:</b> {{ v.prixAchat }} DT</p>
+            <p class="card-text"><b>Location/jour:</b> {{ v.prixLocationJour }} DT</p>
+            <span class="badge text-bg-{{ v.statut == 'disponible' ? 'success' : 'secondary' }}">
+              {{ v.statut }}
+            </span>
+          </div>
+          <div class="card-footer bg-white border-0">
+            <a class="btn btn-primary w-100" href="{{ path('app_catalogue_show', {id: v.id}) }}">Voir détails</a>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p>Aucune voiture disponible.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

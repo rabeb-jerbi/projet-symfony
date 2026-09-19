@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard client{% endblock %}
+
+{% block body %}
+<h1>Dashboard client</h1>
+
+<p>Bienvenue {{ app.user.nom }}</p>
+
+<a class="btn btn-primary" href="{{ path('app_catalogue') }}">Voir le catalogue</a>
+<a class="btn btn-outline-secondary" href="{{ path('client_commandes') }}">Mes commandes</a>
+{% endblock %}

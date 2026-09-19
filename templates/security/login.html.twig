@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<div class="container py-5" style="max-width: 520px;">
+
+  <h1 class="mb-4 text-center">Connexion</h1>
+
+  {% if error %}
+    <div class="alert alert-danger">
+      {{ error.messageKey|trans(error.messageData, 'security') }}
+    </div>
+  {% endif %}
+
+  {% if app.user %}
+    <div class="alert alert-info d-flex justify-content-between align-items-center">
+      <div>
+        Connecté en tant que <b>{{ app.user.userIdentifier }}</b>
+      </div>
+      <a class="btn btn-sm btn-outline-dark" href="{{ path('app_logout') }}">Logout</a>
+    </div>
+
+    <div class="d-grid gap-2">
+      <a class="btn btn-primary" href="{{ path('app_home') }}">Aller à l’accueil</a>
+      <a class="btn btn-outline-primary" href="{{ path('app_catalogue') }}">Voir le catalogue</a>
+      {% if is_granted('ROLE_CLIENT') %}
+        <a class="btn btn-outline-success" href="{{ path('client_dashboard') }}">Dashboard client</a>
+      {% endif %}
+      {% if is_granted('ROLE_ADMIN') %}
+        <a class="btn btn-outline-danger" href="{{ path('admin_dashboard') }}">Dashboard admin</a>
+      {% endif %}
+    </div>
+
+  {% else %}
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <form method="post">
+          <div class="mb-3">
+            <label for="inputEmail" class="form-label">Email</label>
+            <input
+              type="email"
+              value="{{ last_username }}"
+              name="_username"
+              id="inputEmail"
+              class="form-control"
+              autocomplete="email"
+              required
+              autofocus
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="inputPassword" class="form-label">Mot de passe</label>
+            <input
+              type="password"
+              name="_password"
+              id="inputPassword"
+              class="form-control"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+          <button class="btn btn-primary w-100" type="submit">
+            Se connecter
+          </button>
+        </form>
+
+        <div class="text-center mt-3">
+          <span>Pas encore de compte ?</span>
+          <a href="{{ path('app_register') }}">Créer un compte</a>
+        </div>
+
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

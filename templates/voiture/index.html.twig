@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Voiture index{% endblock %}
+
+{% block body %}
+    <h1>Voiture index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Matricule</th>
+                <th>Marque</th>
+                <th>Année</th>
+                <th>Kilometrage</th>
+                <th>PrixAchat</th>
+                <th>PrixLocationJour</th>
+                <th>Documents</th>
+                <th>Statut</th>
+                <th>Photo</th>
+                <th>Modele</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for voiture in voitures %}
+            <tr>
+                <td>{{ voiture.id }}</td>
+                <td>{{ voiture.matricule }}</td>
+                <td>{{ voiture.marque }}</td>
+                <td>{{ voiture.annee }}</td>
+                <td>{{ voiture.kilometrage }}</td>
+                <td>{{ voiture.prixAchat }}</td>
+                <td>{{ voiture.prixLocationJour }}</td>
+                <td>{{ voiture.documents }}</td>
+                <td>{{ voiture.statut }}</td>
+                <td>{{ voiture.photo }}</td>
+                <td>{{ voiture.modele }}</td>
+                <td>
+                    <a href="{{ path('app_voiture_show', {'id': voiture.id}) }}">show</a>
+                    <a href="{{ path('app_voiture_edit', {'id': voiture.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="12">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_voiture_new') }}">Create new</a>
+{% endblock %}
